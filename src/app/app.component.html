@@ -1,0 +1,158 @@
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-4 col-lg-4">
+                <div class="txtleft_header text-left">
+                    <h1>Angular Task</h1> 
+                </div>
+            </div>
+            <div class="col-12 col-md-4 col-lg-4">
+             </div>
+            <div class="col-12 col-md-4 col-lg-4">
+                <div class="txtleft_header text-right">
+                    <div class="txtleft_header">
+                        <h2>Number of work item: {{totalval}}</h2> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header> 
+<div class="main_wrapper">
+    <div class="container">
+        <div class="box-header">
+            <div class="row">
+              <div class="col-md-8"> 
+              </div>
+              <div class="col-md-4 pull-right" align="right"> 
+                <div class="csv-file-chooser-section">
+                    <label  class="btn btn-primary addim label" for="upload-photo"><i class="fa fa-upload" aria-hidden="true"></i> Import CSV</label>
+                    <input type="file" #fileImportInput name="File Upload" id="upload-photo" (change)="fileChangeListener($event)"
+                    accept=".csv">
+                </div>
+                <div> 
+                <button class="btn btn-primary addim" (click)="openModal(template)">
+                    <i class="fa fa-plus-square"></i> Add New Item</button>
+                    </div> 
+              </div>
+            </div>
+    
+            <div></div>
+          </div>
+
+          <div class="csv-result-table">
+  
+        <table class="table">
+            <thead>
+              <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">WorkItem</th>
+                  <th scope="col">dueDate</th>
+                  <th scope="col">No. Resources Needed</th>
+                  <th scope="col">Action</th> 
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let csvData of tabledatas;let i = index;">
+            
+                    <td>{{csvData.Id}}</td>
+                    <td>
+                      <span>{{csvData.WorkItem}}</span>
+                    </td>
+                    <td> 
+                      <span>{{csvData.dueDate}}</span>
+                    </td>
+                    <td>
+                      <span>{{csvData.noResourcesNeeded}}</span>
+                    </td>
+                    <td>
+                      <span (click)="editd(templateE,csvData,i)"> <i class="fa fa-pencil" aria-hidden="true"></i></span>
+                      <span (click)="deleted(templateD, i)"><i class="fa fa-trash" aria-hidden="true"></i> </span>
+                    </td> 
+              
+                  </tr>
+               
+            </tbody>
+          </table>
+        </div>
+      </div>
+      </div> 
+
+
+      <ng-template #template>
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Add Item</h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <form [formGroup]="resourceForm" (ngSubmit)="onSubmit(resourceForm.value)">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">WorkItems</label>
+                    <input type="text" class="form-control" required formControlName="workItem" id="exampleInputEmail1" aria-describedby="workItem" placeholder="Enter work items">
+                    <div *ngIf="resourceForm.controls['workItem'].touched || resourceForm.controls['workItem'].dirty">
+                        <div class="form_error" *ngIf="resourceForm.controls['workItem'].hasError('required')">Work Item is required and cannot be empty.</div>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="exampleInputEmail1">Due Date</label>
+                      <input type="date" class="form-control" required formControlName="dueDate" id="exampleInputEmail1" aria-describedby="dueDate" placeholder="Enter due date">
+                      <div *ngIf="resourceForm.controls['dueDate'].touched || resourceForm.controls['dueDate'].dirty">
+                          <div class="form_error" *ngIf="resourceForm.controls['dueDate'].hasError('required')">Due daye is required and cannot be empty.</div>
+                        </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="exampleInputEmail1">No. resource needed</label>
+                      <input type="number" class="form-control" required formControlName="noresource" id="exampleInputEmail1" aria-describedby="noresource" placeholder="Enter no. resource">
+                      <div *ngIf="resourceForm.controls['noresource'].touched || resourceForm.controls['noresource'].dirty">
+                          <div class="form_error" *ngIf="resourceForm.controls['noresource'].hasError('required')">No. resource is required and cannot be empty.</div>
+                        </div>
+                    </div> 
+                  <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+          </div>
+        </ng-template>
+
+        <ng-template #templateD>
+            <div class="modal-body text-center">
+              <p>Do you want to confirm?</p>
+              <button type="button" class="btn btn-default" (click)="confirm(deletedid)" >Yes</button>
+              <button type="button" class="btn btn-primary" (click)="decline()" >No</button>
+            </div>
+          </ng-template>
+
+          <ng-template #templateE>
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">Edit Item</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <form [formGroup]="EditForm" (ngSubmit)="UpdateItem(EditForm.value, Indxid)">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">WorkItems</label>
+                        <input type="text" class="form-control" required formControlName="workItem" id="exampleInputEmail1" aria-describedby="workItem" placeholder="Enter work items">
+                        <div *ngIf="EditForm.controls['workItem'].touched || EditForm.controls['workItem'].dirty">
+                            <div class="form_error" *ngIf="EditForm.controls['workItem'].hasError('required')">Work Item is required and cannot be empty.</div>
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          <label for="exampleInputEmail1">Due Date</label>
+                          <input type="date" class="form-control" required formControlName="dueDate" id="exampleInputEmail1" aria-describedby="dueDate" placeholder="Enter due date">
+                          <div *ngIf="EditForm.controls['dueDate'].touched || EditForm.controls['dueDate'].dirty">
+                              <div class="form_error" *ngIf="EditForm.controls['dueDate'].hasError('required')">Due daye is required and cannot be empty.</div>
+                            </div>
+                      </div>
+                      <div class="form-group">
+                          <label for="exampleInputEmail1">No. resource needed</label>
+                          <input type="number" class="form-control" required formControlName="noresource" id="exampleInputEmail1" aria-describedby="noresource" placeholder="Enter no. resource">
+                          <div *ngIf="EditForm.controls['noresource'].touched || EditForm.controls['noresource'].dirty">
+                              <div class="form_error" *ngIf="EditForm.controls['noresource'].hasError('required')">No. resource is required and cannot be empty.</div>
+                            </div>
+                        </div> 
+                      <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+              </div>
+            </ng-template>
